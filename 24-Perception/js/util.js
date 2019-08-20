@@ -1,6 +1,11 @@
 // Utility functions and classes
 
 /**
+ * Error for no image
+ */
+class NoImageError extends Error{}
+
+/**
  * Loads input to image using promise
  * 
  * @param {string} imgId - Id of destination image tag
@@ -21,6 +26,9 @@ function readURL(imgId, input) {
             };
 
             reader.readAsDataURL(input.files[0]);
+        }
+        else {
+            reject(new NoImageError('No image'));
         }
     });
 }

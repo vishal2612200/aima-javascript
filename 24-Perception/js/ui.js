@@ -13,21 +13,21 @@ class FallbackComponent extends React.Component {
  * Reveals child component
  */
 class Revealer extends React.Component {
-    componentDidMount(){
+    componentDidMount() {
         $(`#${this.props.baseId}-container`).hide();
     }
-    render(){
+    render() {
         return e('div', null,
             e('div', {
                 id: `${this.props.baseId}-button`,
                 className: 'center btn btn-info',
-                style: {marginTop: '5%', marginBottom: '5%'},
-                onClick: ()=>{
+                style: { marginTop: '5%', marginBottom: '5%' },
+                onClick: () => {
                     $(`#${this.props.baseId}-container`).slideDown();
                     $(`#${this.props.baseId}-button`).hide();
                 }
             }, this.props.promptText),
-            e('div', {id: `${this.props.baseId}-container`},
+            e('div', { id: `${this.props.baseId}-container` },
                 this.props.children
             ),
         );
@@ -86,8 +86,13 @@ class ImageUploader extends React.Component {
                             document.body.style.opacity = '0.3';
                             readURL(`${this.props.imageId}-img`, document.getElementById(`${this.props.imageId}-input`))
                                 .then((result) => this.props.processHandler())
+                                .catch((err) => {
+                                    if(!err instanceof NoImageError){
+                                        throw err;
+                                    }
+                                })
                                 .finally(() => {
-                                    document.body.style.opacity = '';
+                                    document.body.style.opacity = '1';
                                 });
                         },
                     }, null),

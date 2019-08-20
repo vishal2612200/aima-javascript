@@ -93,7 +93,7 @@ class Pipeline2dRGB extends React.Component {
                                 onClick: (e) => {
                                     e.preventDefault();
                                     this.changeInput('image');
-                                    this.img.src = "/third-party/leds.jpg";
+                                    this.img.src = "../third-party/leds.jpg";
                                     this.process();
                                 }
                             }, 'RGB')
@@ -104,7 +104,7 @@ class Pipeline2dRGB extends React.Component {
                                 onClick: (e) => {
                                     e.preventDefault();
                                     this.changeInput('image');
-                                    this.img.src = "/third-party/piripiri.jpg";
+                                    this.img.src = "../third-party/piripiri.jpg";
                                     this.process();
                                 }
                             }, 'Red-Green')
