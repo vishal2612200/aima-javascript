@@ -5,3 +5,15 @@ vacuum-cleaner.svg from Delapouite under CC BY 3.0 http://game-icons.net/delapou
 Australia Map svg from Lokal_Profil [CC BY-SA 2.5 (http://creativecommons.org/licenses/by-sa/2.5), GFDL (http://www.gnu.org/copyleft/fdl.html) or CC-BY-SA-3.0 (http://creativecommons.org/licenses/by-sa/3.0/)], via Wikimedia Commons
 
 mousetrap.min.js from https://craig.is/killing/mice, Apache v2 license
+
+photo-edge-detection.png from Jon McLoone, Wikimedia Commons under CC-BY-SA-3 https://commons.wikimedia.org/wiki/File:%C3%84%C3%A4retuvastuse_n%C3%A4ide.png
+
+gaussian-2d.png from Krishnavedala, Wikimedia Commons under CC0 1.0 https://commons.wikimedia.org/wiki/File:Gaussian_2d.svg
+
+shannon-01.png and shannon-02.png derived from Konrad Jacobs, Wikimedia Commons under CC BY-SA 2.0 DE https://en.wikipedia.org/wiki/File:ClaudeShannon_MFO3807.jpg
+
+vis.min.js modified from https://github.com/almende/vis, MIT License
+
+leds.jpg from Lokal_Profil, Wikimedia Commons under CC BY-SA 3.0 https://commons.wikimedia.org/wiki/File:RBG-LED.jpg
+
+piripiri.jpg from Jeff Lawson, Wikimedia Commons https://commons.wikimedia.org/wiki/File:African_red_devil_peppers.jpg

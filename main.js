@@ -18,7 +18,7 @@
         var header = document.createElement('header');
         body.insertBefore(header, body.firstChild);
         var footer = document.createElement('footer');
-        footer.setAttribute('class', 'container-fluid text-center');
+        footer.setAttribute('class', 'text-center');
         footer.innerHTML = '<img src="http://aima.cs.berkeley.edu/aima_logo.png">';
         body.append(footer);
 

@@ -1,21 +1,256 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <title>24 Perception</title>
-  <link rel="stylesheet" href="../styles.css">
-  <script src="http://code.jquery.com/jquery-1.12.4.js"></script>
-  <script type="text/javascript" src="../main.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<title>Edge Detection - Introduction</title>
+
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+		integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="/styles.css">
+	<link rel="stylesheet" href="./style.css">
+
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+	<script type="text/javascript" src="/main.js"></script>
 </head>
-<body>
 
-  <div class="row">
-    <div class="col-sm-6 col-md-offset-3" id="content">
-      <h1>Perception</h1>
-      <p>TODO</p>
+<body class="flex-content-container">
+	<div class="flex-content">
 
-      
-    </div>
-  </div>
+		<div class="content-container" id="content">
+			<div style="display: flex; flex-direction: column; row-gap: 1em;">
 
+				<h1>Edge Detection</h1>
+
+				<p>
+					For many of us, it is easy to find both the objects in a picture and their boundaries. Humans are
+					very good at identifying what something is and where it is given a clear line of sight, but what if
+					we need to find the boundaries of many objects in an enormously large number photos? This is too
+					much work for one person. Why don't we just make a computer find the edges for us instead?
+					In computer vision, this is a general problem known as <strong>edge detection</strong>.
+				</p>
+
+				<p>
+					Formally, edge detection is the process of detecting the boundaries in an image that separate great
+					changes in brightness or <strong>intensity</strong>. One of the reasons for doing edge detection is
+					that it is able to reduce a complex image down to a simpler one where only edges are marked.
+					Because of this, edge detection often acts as a preliminary step to other computer vision processes.
+				</p>
+
+				<div id="pipeline2d-direct-root"></div>
+
+				<h2>Image Representation</h2>
+
+				<p>
+					Before jumping into edge detection, let's go over how computers represent images. Computers
+					generally store images as grids of values or <strong>pixel arrays</strong>. A color image, for
+					instance, is decomposable into three pixel arrays storing the RGB color channels. While RGB is
+					convenient for representing color, edge detection is only interested in looking at intensity values.
+					Fortunately for us, it is possible to directly compute intensity from RGB values, giving us a pixel
+					array of grayscale intensities to start working with.
+				</p>
+
+				<div id="rgb-root"></div>
+
+				<div class="blurb-container">
+					<h4><strong>From RGB to Intensity</strong></h4>
+					<p>
+						The conversion from RGB to intensity is a somewhat involved process that delves into color
+						science and human perception. While RGB is a helpful model, in reality, humans do not perceive
+						color linearly or equally among the three channels. To convert RGB to intensity, each RGB value
+						must first be mapped into a linear color space. These values are then put through a weighted sum
+						and converted back to our non-linear RGB color space for display.
+					</p>
+				</div>
+
+				<h2>Finding Edges</h2>
+
+				<p>
+					How do we begin searching for edges? We need some natural intuition for what an edge is.
+					To aid us in this question, let us take a step back and re-imagine our problem.
+					Suppose our pixel array is put into 3D space as a topological map where the intensity of
+					each pixel becomes some height. Looking at the example below, it becomes clear that edges are
+					analogous to sharp drops and inclines on this map.
+				</p>
+
+				<div id="topology-root"></div>
+
+				<p>
+					How do we locate areas with these sharp changes in height? Let's pick some point on this map.
+					Knowing our point’s height alone is relatively unhelpful since although it may tell us how
+					high up it is, we get no information about how the height has changed around it. What if, in
+					addition, we also considered the heights of points a small radius away from our chosen point?
+					Ah-hah! Now by comparing these nearby heights, we can get some measurement of the height changes
+					around our point!
+				</p>
+
+				<img src="./images/elevation.png" alt="Elevation comparison example" class="center display-image">
+
+				<p>
+					This intuition is the driving principle behind a well-known edge detector called the <strong>Sobel
+						operator</strong>. The operator works by dragging two <strong>kernels</strong> or
+					<strong>filters</strong> called Sobel X and Sobel Y across an image to calculate horizontal and
+					vertical intensity changes respectively. For each target pixel in the image, the kernel selects and
+					performs an operation on a neighborhood of surrounding pixels. This compares the intensity of the
+					neighboring pixels with each other and uses them to compute the change in intensity at the target
+					pixel. To demonstrate this, below is an interactive example using the Sobel X
+					and Sobel Y filters. Drag the filters around and see how different areas reflect different
+					intensity changes.
+				</p>
+
+				<div id="convolution-root"></div>
+
+				<div class="blurb-container">
+					<h4><strong>The Math Behind the Filter</strong></h4>
+					<p>
+						Under the hood, filters are grids of numerical weights that are matched up to each neighborhood
+						of pixels. The filter weights and the pixel intensities are used to calculate a weighted sum
+						that represents the change at each target pixel. This process of dragging a grid across
+						a larger grid is called <strong>cross correlation</strong>. Doing this with a flipped filter is
+						a slightly different process called <strong>convolution</strong>. In general, we prefer doing
+						convolutions because of their nicer properties, such as being able to
+						compose a series of convolutions into a single convolution.
+					</p>
+				</div>
+
+				<h2>Change as a Vector</h2>
+
+				<p>
+					The end result of applying both the Sobel X and Sobel Y filters to our image is two new pixel arrays
+					containing values that represent horizontal and vertical changes respectively. These values can also
+					be thought of as the X and Y components for a grid of 2D arrows or <strong>vectors</strong>.
+					The vectors gotten using the Sobel operator are known as <strong>gradients</strong>. For a given
+					pixel, the magnitude of the gradient tells us how much overall intensity change occurs at that pixel
+					and the angle tells us the general direction of that intensity change.
+				</p>
+
+				<p>
+					Below is a demonstration that illustrates these gradients. Draw edges or select one of the preset
+					images and observe how the direction and magnitude of the gradient vectors change in response.
+				</p>
+
+				<div id="gradient-root"></div>
+
+				<p>
+					So far, our algorithm consists of taking a color image, converting it to grayscale intensities,
+					and applying the Sobel operator to it to find the image's gradients. Observing the magnitudes
+					of these gradients at the end of the pipeline below, we can already begin to see edges manifest
+					as brighter pixels where intensity change is strong.
+				</p>
+
+				<div id="pipeline2d-short-root"></div>
+
+				<h2>Problems and Shortcomings</h2>
+
+				<p>
+					Plugging images through this algorithm, you may have already noticed that Sobel by itself
+					does not perform very well. Our edge detection is not very good at producing clean and precise
+					edges, nor is it very good at dealing with grainy images.
+				</p>
+
+				<div id="pipeline2d-grainy-root"></div>
+
+				<p>
+					To make edge detection robust, several pre and post-processing steps are required along with Sobel.
+					In fact, our current algorithm with these additional steps was formulated in 1986 by John Canny and
+					is what we know as <strong>Canny edge detection</strong>. The full Canny edge detection
+					pipeline can be seen below.
+				</p>
+
+				<div id="pipeline2d-long-root"></div>
+
+				<p>
+					Since the advent of Canny edge detection, many more methods of edge detection have been
+					proposed and experimented with such as second-differential approaches to looking at intensity
+					or physics-based approaches to name a few.
+				</p>
+
+				<h2>Summary</h2>
+
+				<p>
+					Edge detection is the problem of locating the boundaries among objects in a scene. The core
+					principle behind locating edges is to look for areas of sharp intensity change which can be achieved
+					with the Sobel operator. While this is a start to finding edges, there are many more steps involved
+					in producing clean and reliable edges. The culmination of these steps is an early edge detection
+					algorithm called Canny edge detection which still remains in popular use today.
+				</p>
+			</div>
+		</div>
+
+	</div>
+
+	<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+	<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/106/three.js"></script>
+	<script src="/third-party/vis.min.js"></script>
+
+	<script type="text/javascript" src="./js/setup.js"></script>
+
+	<script type="text/javascript" src="./js/util.js"></script>
+	<script type="text/javascript" src="./js/imageProcessing.js"></script>
+	<script type="text/javascript" src="./js/ui.js"></script>
+	<script type="text/javascript" src="./js/demos/pipeline2d/pipelineHelpers.js"></script>
+
+	<script type="text/javascript" src="./js/demos/pipeline2d/Pipeline2dDirectDemo.js"></script>
+	<script type="text/javascript" src="./js/demos/pipeline2d/Pipeline2dRGB.js"></script>
+	<script type="text/javascript" src="./js/demos/pipeline2d/Pipeline2dGrayscaleDemo.js"></script>
+	<script type="text/javascript" src="./js/demos/TopologyDemo.js"></script>
+	<script type="text/javascript" src="./js/demos/ConvolutionDemo.js"></script>
+	<script type="text/javascript" src="./js/demos/GradientDemo.js"></script>
+	<script type="text/javascript" src="./js/demos/pipeline2d/Pipeline2dShortDemo.js"></script>
+	<script type="text/javascript" src="./js/demos/pipeline2d/Pipeline2dLongDemo.js"></script>
+	<script type="text/javascript" src="./js/demos/pipeline2d/Pipeline2dGrainyDemo.js"></script>
+
+	<script>
+		ReactDOM.render(
+			e(Pipeline2dDirectDemo, null, null),
+			document.getElementById('pipeline2d-direct-root')
+		);
+
+		ReactDOM.render(
+			e(Revealer, {
+				baseId: 'pipeline2d-rgb-collapse',
+				promptText: 'See a Demo'
+			},
+				e(Pipeline2dRGB, null, null),
+			),
+			document.getElementById('rgb-root')
+		);
+
+		ReactDOM.render(
+			e(TopologyDemo, null, null),
+			document.getElementById('topology-root')
+		);
+
+		ReactDOM.render(
+			e(ConvolutionDemo, null, null),
+			document.getElementById('convolution-root')
+		);
+
+		ReactDOM.render(
+			e(GradientDemo, null, null),
+			document.getElementById('gradient-root')
+		);
+
+		ReactDOM.render(
+			e(Pipeline2dShortDemo, null, null),
+			document.getElementById('pipeline2d-short-root')
+		);
+
+		ReactDOM.render(
+			e(Pipeline2dLongDemo, null, null),
+			document.getElementById('pipeline2d-long-root')
+		);
+
+		ReactDOM.render(
+			e(Pipeline2dGrainyDemo, null, null),
+			document.getElementById('pipeline2d-grainy-root')
+		);
+	</script>
 </body>
+
 </html>
